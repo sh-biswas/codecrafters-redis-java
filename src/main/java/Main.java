@@ -1,4 +1,7 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -17,12 +20,30 @@ public class Main {
         {
           serverSocket = new ServerSocket(port);
           serverSocket.setReuseAddress(true);
+
           // Wait for connection from client.
           clientSocket = serverSocket.accept();
           System.out.println("We have a connection!");
-          OutputStream output = clientSocket.getOutputStream();
-          PrintWriter writer = new PrintWriter(output, true);
-          writer.println("+PONG\r");
+          BufferedReader istream =new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+          String line = istream.readLine();
+          while (line != null) {
+            System.out.println("Line: " + line);
+            if (line.equalsIgnoreCase("ping")) 
+            {
+              OutputStream output = clientSocket.getOutputStream();
+              PrintWriter writer = new PrintWriter(output, true);
+              writer.println("+PONG\r");
+            }
+            line = istream.readLine();
+          }
+          //System.out.println(cmd);
+          //while (cmd != null)
+          //{
+          //  writer.println("+PONG\r");
+          //  cmd = reader.readLine();
+          //  System.out.println(cmd);
+          //}
+          //reader.close();
         } 
         catch (IOException e) 
         {
